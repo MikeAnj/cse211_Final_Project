@@ -10,7 +10,7 @@
 #define LAB_LEN		10
 #define FOR_NEST	25
 #define SUB_NEST	25
-#define PROG_SIZE	10000
+#define PROG_SIZE	100000
 #define DELIMITER	1
 #define VARIABLE	2
 #define NUMBER		3
@@ -100,14 +100,14 @@ int main(int argc, char *argv[])
 	}
 	if(!load_program(p_buf,argv[1]))
 	{
-		cprintf("\n file not loaded ");
+		cprintf("\n file not loaded ");		// cprintf("debugging here");
 		getch();
 		endwin();
 		exit(1);
 	}
-	if(setjmp(e_buf))
+	if(setjmp(e_buf)){						// program exits here 
 		endwin();
-		exit(1);
+		exit(1);}
 	prog = p_buf;
 	scan_labels();
 	ftos = 0;
@@ -133,8 +133,8 @@ int main(int argc, char *argv[])
 			}
 		}
 	}while (tok!=FINISHED);
-		free(p_buf);
-		//endwin();
+		free(p_buf);	// cprintf("debugging here"); getch();
+		endwin();
 		return 0;
 }
 
@@ -143,15 +143,15 @@ int load_program(char *p, char *fname)
 	FILE *fp;
 	int i=0;
 	fp = fopen(fname, "rb");
-	if(!fp)
+	if(!fp){
 		endwin();
-		return 0;
+		return 0;}
 	i=0;
 	do {
 		*p = getc(fp);
 		p++; i++;
 	} while (!feof(fp)&& i<PROG_SIZE);
-	*(p-2) = '\0';
+	*(p-2) = NULL;
 	fclose(fp);
 	return 1;
 }
@@ -242,7 +242,7 @@ void scan_labels()
 
 void find_eol()
 {
-	while(*prog != 'n' && *prog != '0')
+	while(*prog != '\n' && *prog != NULL)
 		++prog;
 	if(*prog)
 		prog++;
